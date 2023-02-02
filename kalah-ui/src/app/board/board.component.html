@@ -1,0 +1,65 @@
+<div class="container">
+    <h1>
+        <title class="center">Kalah Game</title>
+    </h1>
+    <br>
+    <div class="center">
+        <form #creationForm="ngForm" (ngSubmit)="createGame()" class="form-inline">
+            <div class="row">
+                <div class="form-group col-md-3">
+                    <button type="submit" class="btn btn-primary mb-2">New Game</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <br>
+    <div class="center" *ngIf="this.gameBoard && this.gameBoard.status === 'FINISHED'">
+        <h2>
+            <div class="player-one" *ngIf="this.gameBoard.winnerPlayer === 'PLAYER_ONE'">
+                <h3>Player One Won!</h3>
+            </div>
+            <div class="player-two" *ngIf="this.gameBoard.winnerPlayer === 'PLAYER_TWO'">
+                <h3>Player Two Won!</h3>
+            </div>
+            <div *ngIf="this.gameBoard.winnerPlayer === 'Draw'">Draw</div>
+        </h2>
+    </div>
+    <div class="center" style="color: red" *ngIf="this.error">
+        {{ error }}
+    </div>
+    <div class="center" [ngClass]="this.gameBoard.playerTurn === 'PLAYER_ONE' ? 'player-one' : 'player-two'"
+        *ngIf="this.gameBoard">
+        <h4 class="status" *ngIf="this.gameBoard.status === 'IN_PROGRESS'">
+            {{ gameBoard.playerTurn.replace('_', ' ') | lowercase }}'s turn
+        </h4>
+    </div>
+
+    <div>
+        <mat-grid-list cols="10" rowHeight="120px" *ngIf="this.gameBoard" class="center board">
+            <mat-grid-tile colspan="1" rowspan="2" class="player-one">
+                Player One
+            </mat-grid-tile>
+            <mat-grid-tile colspan="1" rowspan="2" class="player-one store">
+                    {{ gameBoard.players[0].pits[6].stones }}
+            </mat-grid-tile>
+            <mat-grid-tile (click)="play(number, 'PLAYER_ONE', gameBoard.players[0].pits)" colspan="1" rowspan="1" class="pit pit-content player-one" [ngStyle]="{'cursor': (this.gameBoard.status === 'IN_PROGRESS' && this.gameBoard.playerTurn === 'PLAYER_ONE' && gameBoard.players[0].pits[number].stones > 0) ? 'pointer' : 'default'}" *ngFor="let number of [5, 4, 3, 2, 1, 0]">
+                    {{ gameBoard.players[0].pits[number].stones }}
+            </mat-grid-tile>
+            <mat-grid-tile colspan="1" class="player-two store" rowspan="2">
+                    {{ gameBoard.players[1].pits[6].stones }}
+            </mat-grid-tile>
+            <mat-grid-tile colspan="1" rowspan="2" class="player-two">
+                Player Two
+            </mat-grid-tile>
+            <mat-grid-tile colspan="1" rowspan="1" class="pit pit-content player-two" (click)="play(number, 'PLAYER_TWO', gameBoard.players[1].pits)"
+            [ngStyle]="{'cursor': (this.gameBoard.status === 'IN_PROGRESS' && this.gameBoard.playerTurn === 'PLAYER_TWO' && gameBoard.players[1].pits[number].stones > 0) ? 'pointer' : 'default'}"
+                *ngFor="let number of [0, 1, 2, 3, 4, 5]">
+                    {{ gameBoard.players[1].pits[number].stones }}
+            </mat-grid-tile>
+        </mat-grid-list>
+
+        <div class="center" *ngIf="this.loading">
+            <p>Loading...</p>
+        </div>
+    </div>
+</div>

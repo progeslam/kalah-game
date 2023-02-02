@@ -1,0 +1,32 @@
+version: "3"
+services:
+  kalah:
+    container_name: kalah
+    restart: always
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: kalah
+    ports:
+      - "8080:8080"
+    networks:
+      - kalah-network
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+
+  mysqldb:
+    image: mysql:8
+    restart: on-failure
+    networks:
+      - kalah-network
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: kalah
+    ports:
+      - '3306:3306'
+    healthcheck:
+      test: "exit 0"
+
+networks:
+  kalah-network:
